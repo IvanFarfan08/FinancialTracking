@@ -1,40 +1,21 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, AppState, Text } from 'react-native'
+import { Alert, StyleSheet, View, Text } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Button, Input, Card } from '@rneui/themed'
 import { LinearGradient } from 'expo-linear-gradient'
-import SignUp from './SignUp'
 
-// Tells Supabase Auth to continuously refresh the session automatically if
-// the app is in the foreground. When this is added, you will continue to receive
-// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
-// if the user's session is terminated. This should only be registered once.
-AppState.addEventListener('change', (state) => {
-  if (state === 'active') {
-    supabase.auth.startAutoRefresh()
-  } else {
-    supabase.auth.stopAutoRefresh()
-  }
-})
-
-export default function Auth() {
+export default function SignUp({ onBack }: { onBack: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [showSignUp, setShowSignUp] = useState(false)
-
-  async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    setLoading(false)
-  }
 
   async function signUpWithEmail() {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match')
+      return
+    }
+
     setLoading(true)
     const {
       data: { session },
@@ -44,13 +25,9 @@ export default function Auth() {
       password: password,
     })
 
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
+    if (error) Alert.alert('Error', error.message)
+    if (!session) Alert.alert('Success', 'Please check your inbox for email verification!')
     setLoading(false)
-  }
-
-  if (showSignUp) {
-    return <SignUp onBack={() => setShowSignUp(false)} />
   }
 
   return (
@@ -60,8 +37,8 @@ export default function Auth() {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
         style={styles.purpleSection}>
-        <Text style={styles.headerText}>Welcome!</Text>
-        <Text style={styles.subText}>Let's get your finances in order</Text>
+        <Text style={styles.headerText}>Create Account</Text>
+        <Text style={styles.subText}>Track your finances with us</Text>
       </LinearGradient>
       
       {/* Card in the middle */}
@@ -84,6 +61,15 @@ export default function Auth() {
             placeholder="Password"
             autoCapitalize={'none'}
           />
+          <Input
+            label="Confirm Password"
+            leftIcon={{ type: 'font-awesome', name: 'lock', color: 'rgba(0, 0, 0, 0.8)' }}
+            onChangeText={(text) => setConfirmPassword(text)}
+            value={confirmPassword}
+            secureTextEntry={true}
+            placeholder="Confirm Password"
+            autoCapitalize={'none'}
+          />
         </Card>
       </View>
       
@@ -91,16 +77,16 @@ export default function Auth() {
       <View style={styles.whiteSection}>
       </View>
       <Button 
-            title="Sign in"
-            color="#c54b8c"
-            disabled={loading} 
-            onPress={() => signInWithEmail()} 
-            containerStyle={styles.buttonContainer}
-            buttonStyle={styles.button}
-          />
-          <Text onPress={() => setShowSignUp(true)} style={styles.signUpText}>
-            DON'T HAVE AN ACCOUNT YET?
-          </Text>
+        title="Sign up"
+        color="#c54b8c"
+        disabled={loading} 
+        onPress={() => signUpWithEmail()} 
+        containerStyle={styles.buttonContainer}
+        buttonStyle={styles.button}
+      />
+      <Text onPress={onBack} style={styles.signInText}>
+        ALREADY HAVE AN ACCOUNT?
+      </Text>
     </View>
   )
 }
@@ -146,7 +132,7 @@ const styles = StyleSheet.create({
       width: '100%',
       alignItems: 'center',
       top: '50%',
-      transform: [{ translateY: -120 }], // Adjust this to position the card
+      transform: [{ translateY: -160 }], // Adjusted for the larger card
       zIndex: 10,
     },
     card: {
@@ -162,7 +148,7 @@ const styles = StyleSheet.create({
       shadowRadius: 5,
       elevation: 8,
     },
-    signUpText: {
+    signInText: {
       color: '#333',
       fontSize: 12,
       marginTop: 20,
