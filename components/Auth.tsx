@@ -87,7 +87,6 @@ export default function Auth() {
         </Card>
       </View>
       
-      {/* White bottom section */}
       <View style={styles.whiteSection}>
       </View>
       <Button 

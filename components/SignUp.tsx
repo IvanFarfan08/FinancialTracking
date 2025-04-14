@@ -8,6 +8,7 @@ export default function SignUp({ onBack }: { onBack: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function signUpWithEmail() {
@@ -23,6 +24,11 @@ export default function SignUp({ onBack }: { onBack: () => void }) {
     } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          full_name: name,
+        },
+      },
     })
 
     if (error) Alert.alert('Error', error.message)
@@ -41,7 +47,6 @@ export default function SignUp({ onBack }: { onBack: () => void }) {
         <Text style={styles.subText}>Track your finances with us</Text>
       </LinearGradient>
       
-      {/* Card in the middle */}
       <View style={styles.cardContainer}>
         <Card containerStyle={styles.card}>
           <Input
@@ -50,6 +55,14 @@ export default function SignUp({ onBack }: { onBack: () => void }) {
             onChangeText={(text) => setEmail(text)}
             value={email}
             placeholder="email@address.com"
+            autoCapitalize={'none'}
+          />
+          <Input
+            label="Name"
+            leftIcon={{ type: 'font-awesome', name: 'user', color: 'rgba(0, 0, 0, 0.8)' }}
+            onChangeText={(text) => setName(text)}
+            value={name}
+            placeholder="Name"
             autoCapitalize={'none'}
           />
           <Input
@@ -73,9 +86,9 @@ export default function SignUp({ onBack }: { onBack: () => void }) {
         </Card>
       </View>
       
-      {/* White bottom section */}
       <View style={styles.whiteSection}>
       </View>
+      
       <Button 
         title="Sign up"
         color="#c54b8c"

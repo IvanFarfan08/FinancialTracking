@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth'
-import Account from './components/Account'
+import Dashboard from './components/Dashboard'
 import { View } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 
@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
+      {session && session.user ? <Dashboard key={session.user.id} session={session} /> : <Auth />}
     </View>
   )
 }
