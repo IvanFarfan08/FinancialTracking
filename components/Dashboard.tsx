@@ -8,6 +8,7 @@ import AddIncome from './screens/AddIncome'
 import AddDebt from './screens/AddDebt'
 import CreateBudget from './screens/CreateBudget'
 import SetReminders from './screens/SetReminders'
+import ViewReports from './screens/ViewReports'
 
 export default function Dashboard({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true)
@@ -19,8 +20,45 @@ export default function Dashboard({ session }: { session: Session }) {
   const [currentScreen, setCurrentScreen] = useState<string | null>(null)
 
   useEffect(() => {
-    if (session) getProfile()
+    if (session) getProfile(), fetchReminders()
   }, [session])
+
+  async function fetchReminders() {
+    try {
+      setLoading(true)
+      if (!session?.user) throw new Error('No user on the session!')
+
+      const { data, error } = await supabase
+        .from('reminders')
+        .select('*')
+        .eq('user_id', session?.user.id)
+      if (error) throw error
+
+      if (data && data.length > 0) {
+        const currentDate = new Date();
+        const reminderDate = new Date();
+        const dueDate = new Date(data[0].due_date);
+        const daysBefore = data[0].days_before;
+
+        reminderDate.setDate(dueDate.getDate() - daysBefore);
+        if (reminderDate <= currentDate) {
+          Alert.alert('Payment Reminder', `It\'s time to pay your debt: ${data[0].name}`);
+          // then delete reminder from database
+          const { error } = await supabase
+            .from('reminders')
+            .delete()
+            .eq('id', data[0].id)
+          if (error) throw error
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function getProfile() {
     try {
@@ -40,10 +78,14 @@ export default function Dashboard({ session }: { session: Session }) {
         setUsername(data.username)
         setWebsite(data.website)
         setAvatarUrl(data.avatar_url)
-        if (data.full_name.includes(' ')) {
-          setName(data.full_name.split(' ')[0])
+        if (data.full_name) {
+          if (data.full_name.includes(' ')) {
+            setName(data.full_name.split(' ')[0])
+          } else {
+            setName(data.full_name)
+          }
         } else {
-          setName(data.full_name)
+          setName(username || 'User')
         }
       }
     } catch (error) {
@@ -110,6 +152,7 @@ export default function Dashboard({ session }: { session: Session }) {
     AddDebt: AddDebt,
     CreateBudget: CreateBudget,
     SetReminders: SetReminders,
+    ViewReports: ViewReports,
   };
 
   // If a screen is selected, render the appropriate component

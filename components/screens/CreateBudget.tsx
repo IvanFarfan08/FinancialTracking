@@ -13,7 +13,7 @@ interface CreateBudgetProps {
 
 export default function CreateBudget({ onBack, session }: CreateBudgetProps) {
   const [amount, setAmount] = useState('0.00');
-  const [selectedCategory, setSelectedCategory] = useState('general');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [budgetName, setBudgetName] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -60,7 +60,7 @@ export default function CreateBudget({ onBack, session }: CreateBudgetProps) {
   };
   
   const categories = [
-    { id: 'general', name: 'All Categories', icon: 'ellipsis-horizontal' },
+    { id: 'all', name: 'All Categories', icon: 'ellipsis-horizontal' },
     { id: 'food', name: 'Food', icon: 'fast-food' },
     { id: 'transport', name: 'Transport', icon: 'car' },
     { id: 'entertainment', name: 'Entertainment', icon: 'film' },

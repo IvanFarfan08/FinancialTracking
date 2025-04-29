@@ -19,7 +19,6 @@ export default function SetReminders({ onBack, session }: SetRemindersProps) {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [reminderDays, setReminderDays] = useState<'1' | '5' | '7' | '14' | '30'>('1');
-  
   const isFormValid = () => {
     return (
       reminderName.trim() !== '' && 

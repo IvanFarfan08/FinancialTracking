@@ -12,13 +12,20 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "^8.3.0",
     "@rneui/themed": "^4.0.0-rc.8",
+    "@shopify/react-native-skia": "^1.12.4",
     "@supabase/supabase-js": "^2.49.4",
     "expo": "~52.0.42",
     "expo-linear-gradient": "^14.0.2",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
     "react-native": "0.76.8",
-    "react-native-modal-datetime-picker": "^18.0.0"
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-graph": "^1.1.0",
+    "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-reanimated": "^3.17.5",
+    "react-native-svg": "^15.11.2",
+    "victory": "^37.3.6",
+    "victory-native": "^41.17.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
